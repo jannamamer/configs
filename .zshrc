@@ -1,8 +1,10 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH="/usr/local/sbin:$PATH"
+export PATH="/usr/local/bin:$PATH"
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/mamer/.oh-my-zsh"
+export ZSH="[path_to_directory]/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -42,10 +44,10 @@ ZSH_THEME="pygmalion"
 # DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
+ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
+COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -73,7 +75,6 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
-
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
@@ -89,18 +90,63 @@ source $ZSH/oh-my-zsh.sh
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-# aliases
-alias py="python3"
+# Git aliases
+alias gs="git status --porcelain"
+alias gl="git pull"
+alias gp="git push"
+alias gco="git checkout"
+alias ga="git add"
+alias gc="git commit"
+alias gd="git diff"
+alias gh="git glow"
+alias gr='git rebase'
+alias gb='git branch'
 
+# Ruby cofiguration
 export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
-export PATH="/usr/local/sbin:$PATH"
+
+# Vim
+set vi = "/usr/local/bin/vim"
 set vim = "/usr/local/bin/vim"
+
+# Asdf
+. /usr/local/opt/asdf/asdf.sh
+
+# AWS
+export PATH="$PATH:$HOME/src/aws-tools/bin"
+
+aws-login-wo-email() {
+  $(aws ecr get-login --no-include-email --region ap-southeast-2)
+}
+
+# Docker aliases
+alias dc=docker-compose
+
+# Elixir
+mix-credo() {
+  updated_files=$(git status --porcelain)
+
+  if [ ! -z "$updated_files" ]
+  then
+      echo 1
+      files=""
+
+      while IFS= read -r file
+      do
+          files="$files ${file:3}"
+      done <<< "$updated_files"
+
+      $(docker-compose run web mix credo --strict ${files})
+  fi
+}
+
+# For MySQL
+# export LDFLAGS="-L/usr/local/opt/openssl/lib"
+# export CPPFLAGS="-I/usr/local/opt/openssl/include"
+
+# MariaDB
+export PATH="/usr/local/opt/mariadb@10.3/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/mariadb@10.3/lib"
+export CPPFLAGS="-I/usr/local/opt/mariadb@10.3/include"
+export PKG_CONFIG_PATH="/usr/local/opt/mariadb@10.3/lib/pkgconfig"
